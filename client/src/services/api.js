@@ -7,9 +7,9 @@
 import axios from 'axios';
 
 // Create an axios instance with base URL
-// We use /api because we set up a proxy in vite.config.js
+// In production (Vercel), we use the env variable. In dev, we can rely on the proxy or fallback.
 const api = axios.create({
-    baseURL: '/api',
+    baseURL: import.meta.env.VITE_API_URL || '/api',
 });
 
 // Interceptor to add the JWT token to every request

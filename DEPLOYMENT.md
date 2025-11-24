@@ -45,7 +45,7 @@ dist/
 6.  **Output Directory**: `dist` (Default).
 7.  **Environment Variables**:
     -   `VITE_API_URL`: The Backend Service URL from step 3 (e.g., `https://devtype-api.onrender.com`).
-        *Note: You might need to update your `vite.config.js` or `api.js` to use this variable if not already set up.*
+        *Important: Do not add a trailing slash. It should look like `https://devtype-api.onrender.com`.*
 8.  Click **Deploy**.
 
 ## 5. Final Configuration
