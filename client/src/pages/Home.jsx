@@ -310,7 +310,7 @@ const Home = ({ user, setUser }) => {
             </p>
 
             <p style={{ marginTop: '10px', color: '#64748b', fontSize: '14px' }}>
-                💡 Tip: Press <strong>Alt+Tab</strong> to restart the test
+                💡 Tip: Press <strong>Tab+Enter</strong> to restart the test
             </p>
 
             <button

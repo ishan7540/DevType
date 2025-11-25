@@ -35,8 +35,8 @@ const Login = ({ setUser }) => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-            <h2 style={{ textAlign: 'center' }}>Login</h2>
+        <div style={{ maxWidth: '400px', margin: '50px auto', padding: '40px', border: '1px solid #334155', borderRadius: '8px', backgroundColor: '#1e293b' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Login</h2>
 
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
@@ -48,7 +48,7 @@ const Login = ({ setUser }) => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                        style={{ width: '100%', padding: '10px', marginTop: '5px', boxSizing: 'border-box', backgroundColor: '#0f172a', color: 'white', border: '1px solid #475569', borderRadius: '4px' }}
                     />
                 </div>
 
@@ -59,7 +59,7 @@ const Login = ({ setUser }) => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                        style={{ width: '100%', padding: '10px', marginTop: '5px', boxSizing: 'border-box', backgroundColor: '#0f172a', color: 'white', border: '1px solid #475569', borderRadius: '4px' }}
                     />
                 </div>
 
