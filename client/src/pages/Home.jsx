@@ -36,6 +36,8 @@ const Home = ({ user, setUser }) => {
     // Refs
     const inputRef = useRef(null);
     const timerRef = useRef(null);
+    const wordContainerRef = useRef(null);
+    const activeWordRef = useRef(null);
 
     // Initialize game on mount
     useEffect(() => {
@@ -55,16 +57,37 @@ const Home = ({ user, setUser }) => {
         return () => clearInterval(timerRef.current);
     }, [isActive, timeLeft]);
 
-    // Calculate live WPM and Accuracy
+    // Calculate live WPM and Accuracy & Scroll
     useEffect(() => {
         if (isActive || isFinished) {
             calculateStats();
+        }
+
+        // Scroll to active character
+        if (activeWordRef.current && wordContainerRef.current) {
+            const container = wordContainerRef.current;
+            const active = activeWordRef.current;
+
+            // Simple logic: keep active element in the middle of the container
+            const containerHeight = container.clientHeight;
+            const activeTop = active.offsetTop;
+            const containerTop = container.offsetTop;
+
+            // Calculate relative position
+            const relativeTop = activeTop - containerTop;
+
+            // Scroll if we are past the middle
+            if (relativeTop > containerHeight / 2) {
+                container.scrollTop = relativeTop - containerHeight / 2;
+            } else {
+                container.scrollTop = 0;
+            }
         }
     }, [userInput, timeLeft]);
 
     const resetGame = () => {
         if (mode === 'text') {
-            setWords(generateWords(30));
+            setWords(generateWords(300));
             setSnippetTitle('');
         } else {
             const snippet = getRandomSnippet();
@@ -78,6 +101,8 @@ const Home = ({ user, setUser }) => {
         setWpm(0);
         setAccuracy(0);
         clearInterval(timerRef.current);
+        // Reset scroll
+        if (wordContainerRef.current) wordContainerRef.current.scrollTop = 0;
         // Focus input
         if (inputRef.current) inputRef.current.focus();
     };
@@ -91,6 +116,7 @@ const Home = ({ user, setUser }) => {
         setIsActive(false);
         setIsFinished(true);
         calculateStats();
+        handleSaveScore(); // Auto-save when game ends
     };
 
     const calculateStats = () => {
@@ -144,9 +170,7 @@ const Home = ({ user, setUser }) => {
             // Update local user state with new high score if applicable
             if (result.highScore > user.highScore) {
                 setUser({ ...user, highScore: result.highScore });
-                alert('New High Score Saved!');
-            } else {
-                alert('Score saved (not a new high score).');
+                // We don't alert anymore, just update state to show badge in modal
             }
         } catch (error) {
             console.error('Failed to save score:', error);
@@ -174,13 +198,19 @@ const Home = ({ user, setUser }) => {
             const isCurrent = index === userInput.length;
 
             return (
-                <span key={index} style={{
-                    color,
-                    backgroundColor: isCurrent ? '#334155' : 'transparent', // Darker highlight
-                    fontSize: '24px',
-                    fontFamily: 'monospace',
-                    whiteSpace: mode === 'code' ? 'pre' : 'normal' // Preserve whitespace for code, normal for text
-                }}>
+                <span
+                    key={index}
+                    ref={isCurrent ? activeWordRef : null}
+                    style={{
+                        color,
+                        backgroundColor: isCurrent ? '#334155' : 'transparent',
+                        fontSize: '24px',
+                        fontFamily: 'monospace',
+                        whiteSpace: mode === 'code' ? 'pre' : 'normal',
+                        borderLeft: isCurrent ? '2px solid #f8fafc' : 'none', // Cursor effect
+                        animation: isCurrent ? 'blink 1s step-end infinite' : 'none'
+                    }}
+                >
                     {char}
                 </span>
             );
@@ -225,19 +255,24 @@ const Home = ({ user, setUser }) => {
             <Timer timeLeft={timeLeft} />
 
             {/* Word Display */}
-            <div style={{
-                marginBottom: '20px',
-                padding: '20px',
-                border: '1px solid #334155',
-                backgroundColor: '#1e293b',
-                borderRadius: '8px',
-                minHeight: '100px',
-                lineHeight: '1.5',
-                textAlign: 'left',
-                whiteSpace: 'pre-wrap', // Allow wrapping but preserve newlines
-                fontFamily: 'monospace',
-                overflowX: 'auto' // Scroll if code is too wide
-            }}>
+            <div
+                ref={wordContainerRef}
+                style={{
+                    marginBottom: '20px',
+                    padding: '20px',
+                    border: '1px solid #334155',
+                    backgroundColor: '#1e293b',
+                    borderRadius: '8px',
+                    height: '150px', // Fixed height for scrolling
+                    lineHeight: '1.5',
+                    textAlign: 'left',
+                    whiteSpace: 'pre-wrap',
+                    fontFamily: 'monospace',
+                    overflowY: 'hidden', // Hide scrollbar but allow programmatic scrolling
+                    overflowX: 'auto',
+                    position: 'relative'
+                }}
+            >
                 {renderWords()}
             </div>
 
@@ -291,9 +326,9 @@ const Home = ({ user, setUser }) => {
                     wpm={wpm}
                     accuracy={accuracy}
                     onRestart={resetGame}
-                    onSave={handleSaveScore}
                     isSaving={isSaving}
                     user={user}
+                    isHighScore={user && wpm >= user.highScore && wpm > 0}
                 />
             )}
         </div>

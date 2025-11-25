@@ -34,9 +34,6 @@ const WORDS = [
 ];
 
 // Generates a random string of words
-export const generateWords = (count = 30) => {
-    // 1. Sort the array randomly (shuffle)
-    // 2. Take the first 'count' elements
-    // 3. Join them with spaces
+export const generateWords = (count = 300) => {
     return WORDS.sort(() => 0.5 - Math.random()).slice(0, count).join(' ');
 };
