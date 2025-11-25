@@ -57,30 +57,34 @@ const Home = ({ user, setUser }) => {
         return () => clearInterval(timerRef.current);
     }, [isActive, timeLeft]);
 
-    // Calculate live WPM and Accuracy & Scroll
+    // Calculate live WPM and Accuracy & Smart Scroll
     useEffect(() => {
         if (isActive || isFinished) {
             calculateStats();
         }
 
-        // Scroll to active character
+        // Smart scroll: only adjust when cursor is near edges
         if (activeWordRef.current && wordContainerRef.current) {
             const container = wordContainerRef.current;
-            const active = activeWordRef.current;
+            const activeElement = activeWordRef.current;
 
-            // Simple logic: keep active element in the middle of the container
-            const containerHeight = container.clientHeight;
-            const activeTop = active.offsetTop;
-            const containerTop = container.offsetTop;
+            const containerRect = container.getBoundingClientRect();
+            const activeRect = activeElement.getBoundingClientRect();
 
-            // Calculate relative position
-            const relativeTop = activeTop - containerTop;
+            // Calculate positions relative to container
+            const relativeTop = activeRect.top - containerRect.top;
+            const relativeBottom = containerRect.bottom - activeRect.bottom;
 
-            // Scroll if we are past the middle
-            if (relativeTop > containerHeight / 2) {
-                container.scrollTop = relativeTop - containerHeight / 2;
-            } else {
-                container.scrollTop = 0;
+            // Define threshold zones (only scroll if cursor is in top/bottom 20% of container)
+            const threshold = containerRect.height * 0.2;
+
+            // Only scroll if cursor is too close to top or bottom
+            if (relativeTop < threshold) {
+                // Cursor too close to top, scroll up a bit
+                container.scrollTop -= (threshold - relativeTop);
+            } else if (relativeBottom < threshold) {
+                // Cursor too close to bottom, scroll down a bit
+                container.scrollTop += (threshold - relativeBottom);
             }
         }
     }, [userInput, timeLeft]);
@@ -268,7 +272,7 @@ const Home = ({ user, setUser }) => {
                     textAlign: 'left',
                     whiteSpace: 'pre-wrap',
                     fontFamily: 'monospace',
-                    overflowY: 'hidden', // Hide scrollbar but allow programmatic scrolling
+                    overflowY: 'auto', // Allow scrolling
                     overflowX: 'auto',
                     position: 'relative'
                 }}
@@ -303,6 +307,10 @@ const Home = ({ user, setUser }) => {
 
             <p style={{ marginTop: '20px', color: '#94a3b8' }}>
                 {isActive ? 'Typing...' : 'Start typing to begin!'}
+            </p>
+
+            <p style={{ marginTop: '10px', color: '#64748b', fontSize: '14px' }}>
+                💡 Tip: Press <strong>Alt+Tab</strong> to restart the test
             </p>
 
             <button
