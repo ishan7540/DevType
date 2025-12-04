@@ -11,6 +11,7 @@ A simple, beginner-friendly typing test application built with the MERN stack (M
 ## Prerequisites
 - Node.js installed on your machine.
 - A MongoDB database (local or MongoDB Atlas).
+- having a nice personality
 
 ## Setup Instructions
 
