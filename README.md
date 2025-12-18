@@ -8,7 +8,7 @@ A simple, beginner-friendly typing test application built with the MERN stack (M
 - **Authentication**: User registration and login using JWT (JSON Web Tokens).
 - **High Scores**: Save your best WPM score to the database.
 
-## Prerequisites
+## Prerequisitess
 - Node.js installed on your machine.
 - A MongoDB database (local or MongoDB Atlas).
 - having a nice personality
